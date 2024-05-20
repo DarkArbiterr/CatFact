@@ -1,26 +1,35 @@
 using CatFact.Components;
+using CatFact.Interfaces;
+using CatFact.Services;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Rejestracja us³ug w kontenerze DI
+builder.Services.AddHttpClient<IHttpClientService, HttpClientService>();
+builder.Services.AddSingleton<IFileService, FileService>();
+
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddBlazorBootstrap();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Konfiguracja middleware
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
 app.UseHttpsRedirection();
-
+app.UseRouting();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
+// Mapowanie komponentów Razor
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 

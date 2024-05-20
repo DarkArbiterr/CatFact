@@ -1,7 +1,88 @@
 ﻿@page "/"
+@using CatFact.Services
+@using CatFact.Interfaces
+@using BlazorBootstrap
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<div class="centered-container">
+    
+    <Card Style="width:40rem; border-radius:10px" TextAlignment="Alignment.Center">
+        <CardBody>
+            <CardTitle>
+                <i style="margin-top: 10px;" class="fa-solid fa-cat fa-2x" />
+                <h1 style="margin-top: 5px; font-family: 'Teko', sans-serif;">Cat Fact</h1>
+            </CardTitle>
+            <CardText Style="margin:10px 10px 10px 10px; background-color:gainsboro; border-radius:4px">
+                @if (isLoading)
+                {
+                        <p style="padding:17px;"><Spinner Type="SpinnerType.Dots" /></p>
+                }
+                else if (catFact != null)
+                {
+                    <p style="font-style: italic; padding:17px;">@catFact</p>
+                }
+                else
+                {
+                    <p>No data available.</p>
+                }
+            </CardText>
+            <!-- Przycisk do pobierania nowego faktu -->
+            <Button @onclick="GetNewFact" style="margin: 10px 0px 10px 0px; cursor: pointer; background-color:#e37e56; color:white;">Get New Fact</Button>
+        </CardBody>
+    </Card>
+    
+</div>
 
-Welcome to your new app.
+<style>
+    .centered-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 150px; /* Ustawia margines od góry */
+    }
+</style>
+
+@code {
+    private string? catFact;
+    private bool isLoading;
+
+    // Wstrzyknięcie zależności dla usługi HTTP
+    [Inject]
+    private IHttpClientService httpClientService { get; set; } = default!;
+
+    // Wstrzyknięcie zależności dla usługi plików
+    [Inject]
+    private IFileService fileService { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        System.Console.WriteLine("Component initialized");
+        await GetNewFact();
+    }
+
+    /// <summary>
+    /// Wysłanie żądania i wyświetlenie nowego faktu o kotach
+    /// </summary>
+    /// <returns></returns>
+    private async Task GetNewFact()
+    {
+        try
+        {
+            isLoading = true;
+            StateHasChanged();
+            System.Console.WriteLine("Fetching new cat fact...");
+            catFact = await httpClientService.GetCatFact(); // Pobieranie faktu o kotach z usługi HTTP
+            System.Console.WriteLine($"Fetched cat fact: {catFact}");
+            fileService.AppendToFile("cat_facts.txt", catFact); // Zapis faktu do pliku
+        }
+        catch (Exception ex)
+        {
+            System.Console.WriteLine($"Error fetching cat fact: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+}

@@ -1,0 +1,4 @@
+{"fact":"Some Siamese cats appear cross-eyed because the nerves from the left side of the brain go to mostly the right eye and the nerves from the right side of the brain go mostly to the left eye. This causes some double vision, which the cat tries to correct by \u201ccrossing\u201d its eyes.","length":275}
+{"fact":"A cat can spend five or more hours a day grooming himself.","length":58}
+{"fact":"In contrast to dogs, cats have not undergone major changes during their domestication process.","length":94}
+{"fact":"A cat uses its whiskers for measuring distances.  The whiskers of a cat are capable of registering very small changes in air pressure.","length":134}
